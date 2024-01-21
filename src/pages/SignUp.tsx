@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 
 const ref = collection(db, 'user');
 
@@ -14,15 +14,23 @@ const SignUp = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")
+  const [error, setError] = useState("");
 
-  const handleSubmit = useCallback((e: any) => {
+  const handleSubmit = useCallback(async (e: any) => {
     e.preventDefault();
-  
+
     if (!email || !password || !name || !surname || !username) {
       alert("Please fill in all the fields");
       return;
     }
-  
+
+    const usernameQuery = query(ref, where("username", "==", username));
+    const usernameSnapshot = await getDocs(usernameQuery);
+    if (!usernameSnapshot.empty) {
+      setError("Bu kullanıcı adı zaten kullanılıyor. Lütfen başka bir kullanıcı adı ile tekrar deneyin.");
+      return;
+    }
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((auth) => {
         console.log("User created:", auth);
@@ -39,7 +47,13 @@ const SignUp = () => {
           createdAt: new Date(),
         });
       })
-      .catch((e) => alert(e));
+      .catch((error) => {
+        if (error.code === 'auth/email-already-in-use') {
+          setError("Bu email zaten kullanılıyor. Lütfen başka bir email ile tekrar deneyin.");
+        } else {
+          setError("Bir hata oluştu. Lütfen tekrar deneyin.");
+        }
+      });
   }, [username, email, password, name, surname]);
 
   return (
@@ -85,6 +99,7 @@ const SignUp = () => {
           className="p-4 bg-green-400 rounded-md"
           value="Sign Up"
         />
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         <Link to="/sign-in">Don't have an account? Sign In</Link>
       </form>
     </div>
