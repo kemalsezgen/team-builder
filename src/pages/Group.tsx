@@ -4,9 +4,7 @@ import { useGroups } from '@/contexts';
 import GroupType from '@/types/GroupType';
 
 const Group = () => {
-  //const { users } = useUsers();
   const { groups } = useGroups();
-  //const { currentUser } = useCurrentUser();
   const { groupName } = useParams<{ groupName: string }>();
 
   const [group, setGroup] = useState<GroupType | undefined>();
