@@ -10,6 +10,8 @@ const Profile = () => {
   const { currentUser } = useCurrentUser();
   const { username } = useParams<{ username: string }>();
   const [profileOwner, setProfileOwner] = useState<UserType | undefined>(undefined);
+  const [isFollowersVisible, setIsFollowersVisible] = useState<boolean>(false);
+  const [isFollowingsVisible, setIsFollowingsVisible] = useState<boolean>(false);
 
   useEffect(() => {
     // users array'indeki kullanıcı bilgileri güncellendiğinde veya URL'deki kullanıcı adı değiştiğinde çalışır
@@ -31,11 +33,23 @@ const Profile = () => {
         <div className='flex justify-center gap-8 text-center mt-4'>
           <div>
             <p className='text-xl font-bold'>{profileOwner?.followers?.length}</p>
-            <h2 className='text-xl font-bold'>Followers</h2>
+            <h2 className='text-xl font-bold hover:bg-red-200 hover:cursor-pointer' onClick={() => setIsFollowersVisible(!isFollowersVisible)}>Followers</h2>
+            <ul className={!isFollowersVisible ? 'hidden' : ''}>
+              {currentUser?.followers?.map((followerUsername: string) => {
+                const follower = users?.find((u) => u.username === followerUsername);
+                return <li key={followerUsername}>{follower?.username || 'Unknown User'}</li>;
+              })}
+            </ul>
           </div>
           <div>
             <p className='text-xl font-bold'>{profileOwner?.following?.length}</p>
-            <h2 className='text-xl font-bold'>Following</h2>
+            <h2 className='text-xl font-bold hover:bg-red-200 hover:cursor-pointer' onClick={() => setIsFollowingsVisible(!isFollowingsVisible)}>Following</h2>
+            <ul className={!isFollowingsVisible ? 'hidden' : ''}>
+              {currentUser?.following?.map((followingUsername: string) => {
+                const following = users?.find((u) => u.username === followingUsername);
+                return <li key={followingUsername}>{following?.username || 'Unknown User'}</li>;
+              })}
+            </ul>
           </div>
         </div>
       </div>
