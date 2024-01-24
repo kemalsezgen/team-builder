@@ -26,7 +26,8 @@ const Home = () => {
             </Link>
           </p>
           <p className='text-lg text-pink-500'>{currentUser?.email}</p>
-          <div>
+          { /*
+            <div>
             <h2 className='text-xl font-bold'>Takipçilerin:</h2>
             <ul>
               {currentUser?.followers?.map((followerUsername: string) => {
@@ -45,6 +46,8 @@ const Home = () => {
               })}
             </ul>
           </div>
+            */
+          }
         </div>
         <div>
           <Link to="/groups"><button className='text-md p-2 bg-blue-300 h-12 mr-4'>Groups</button></Link>
@@ -54,7 +57,7 @@ const Home = () => {
         </div>
       </div>
       <AddPost />
-      <Posts profileOwner={null}/>
+      <Posts profileOwner={null} />
     </div>
   )
 }
